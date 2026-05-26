@@ -1,15 +1,19 @@
 import { useState, useMemo, useEffect } from 'react'
-import { ArrowRight, Mail, Phone, MapPin, LayoutGrid, List, Search } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Mail, Phone, MapPin, LayoutGrid, List, Search, Pencil, PlusCircle } from 'lucide-react'
 import { getAllCustomers } from '../data/mock'
-import CustomerModal from '../components/CustomerModal'
+import CustomerDetailDrawer from '../components/CustomerDetailDrawer'
+import CreateClientModal from '../components/CreateClientModal'
 
 const ITEMS_PER_PAGE = 9
 
 export default function CustomersPage() {
+  const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<typeof allCustomers[number] | null>(null)
+  const [creating, setCreating] = useState(false)
 
   const allCustomers = useMemo(() => getAllCustomers(), [])
 
@@ -43,7 +47,7 @@ export default function CustomersPage() {
           <h1 className="mt-3 text-h3 text-slate-950">Clientes</h1>
           <p className="mt-1 text-body-small text-slate-500">{filtered.length} registros</p>
         </div>
-        <button className="inline-flex items-center justify-center rounded-lg bg-violet-700 px-5 py-3 text-button font-semibold text-white transition hover:bg-violet-800">
+        <button onClick={() => setCreating(true)} className="inline-flex items-center justify-center rounded-lg bg-violet-700 px-5 py-3 text-button font-semibold text-white transition hover:bg-violet-800">
           + Nuevo cliente
         </button>
       </div>
@@ -79,13 +83,14 @@ export default function CustomersPage() {
       {view === 'grid' ? (
         <div className="grid gap-6 xl:grid-cols-3">
           {paged.map(customer => (
-            <article key={customer.name} className="flex flex-col rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/50">
+            <article key={customer.name} className="flex cursor-pointer flex-col rounded-lg border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/50 transition hover:shadow-md" onClick={() => setSelected(customer)}>
               <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-3xl bg-violet-100 text-h4 font-semibold text-violet-700">
                   {customer.initials}
                 </div>
                 <div className="min-w-0">
                   <h2 className="truncate text-h5 font-semibold text-slate-950">{customer.name}</h2>
+                  {customer.owner && <p className="text-caption text-slate-500">{customer.owner}</p>}
                 </div>
               </div>
 
@@ -108,9 +113,14 @@ export default function CustomersPage() {
 
               <div className="mt-4 flex items-center justify-between text-body-medium font-semibold text-slate-700">
                 <span>{customer.tickets} tickets</span>
-                <button onClick={() => setSelected(customer)} className="inline-flex items-center gap-1.5 text-violet-700 transition hover:text-violet-900">
-                  Ver perfil <ArrowRight className="h-4 w-4" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button onClick={e => { e.stopPropagation(); setSelected(customer) }} className="rounded-lg p-1.5 text-violet-600 transition hover:bg-violet-50" title="Editar perfil">
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                  <button onClick={e => { e.stopPropagation(); navigate('/tickets/registro') }} className="rounded-lg p-1.5 text-emerald-600 transition hover:bg-emerald-50" title="Nuevo ticket">
+                    <PlusCircle className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </article>
           ))}
@@ -158,9 +168,14 @@ export default function CustomersPage() {
                   </td>
                   <td className="px-4 py-4 font-semibold text-slate-900">{customer.tickets}</td>
                   <td className="px-4 py-4">
-                    <button onClick={() => setSelected(customer)} className="inline-flex items-center gap-1 text-button font-semibold text-violet-700 transition hover:text-violet-900">
-                      Ver perfil <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => setSelected(customer)} className="rounded-lg p-1.5 text-violet-600 transition hover:bg-violet-50" title="Editar perfil">
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button onClick={() => navigate('/tickets/registro')} className="rounded-lg p-1.5 text-emerald-600 transition hover:bg-emerald-50" title="Nuevo ticket">
+                        <PlusCircle className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -202,7 +217,11 @@ export default function CustomersPage() {
       )}
 
       {selected && (
-        <CustomerModal customer={selected} onClose={() => setSelected(null)} />
+        <CustomerDetailDrawer customer={selected} onClose={() => setSelected(null)} />
+      )}
+
+      {creating && (
+        <CreateClientModal onClose={() => setCreating(false)} />
       )}
     </div>
   )

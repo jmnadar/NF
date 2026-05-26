@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swim CRM — Documentación del Proyecto</title>
+<style>
+:root {
+  --bg: #f1f5f9; --surface: #fff; --border: #e5e7eb;
+  --text: #1f2937; --text-sec: #6b7280; --primary: #2563eb;
+  --primary-hover: #1d4ed8; --accent: #3b82f6;
+  --sidebar-bg: #fff; --code-bg: #f8fafc;
+  --shadow: 0 1px 3px rgba(0,0,0,.1);
+  --radius: 1.25rem;
+}
+.dark {
+  --bg: #000; --surface: #030712; --border: #1f2937;
+  --text: #f9fafb; --text-sec: #9ca3af; --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --sidebar-bg: #030712; --code-bg: #111827;
+  --shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, system-ui, sans-serif;
+  background: var(--bg); color: var(--text);
+  display: flex; min-height: 100vh; transition: .3s;
+}
+.sidebar {
+  width: 300px; background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  height: 100vh; position: sticky; top: 0;
+  overflow-y: auto; flex-shrink: 0; padding: 0;
+  display: flex; flex-direction: column;
+}
+.sidebar-header {
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-header h1 {
+  font-size: 18px; font-weight: 800;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.sidebar-header .version { font-size: 11px; color: var(--text-sec); margin-top: 2px; }
+.search-box {
+  margin: 12px 16px; position: relative;
+}
+.search-box input {
+  width: 100%; padding: 8px 12px 8px 36px;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--bg); color: var(--text);
+  font-size: 13px; outline: none; transition: .2s;
+}
+.search-box input:focus { border-color: var(--primary); }
+.search-box svg {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; color: var(--text-sec);
+}
+.nav-section { margin-bottom: 4px; }
+.nav-category {
+  padding: 6px 20px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em;
+  color: var(--text-sec); cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  user-select: none; transition: .2s;
+}
+.nav-category:hover { color: var(--primary); }
+.nav-category .arrow {
+  font-size: 10px; transition: transform .2s;
+}
+.nav-category.open .arrow { transform: rotate(90deg); }
+.nav-items { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
+.nav-items.open { max-height: 2000px; }
+.nav-item {
+  display: block; padding: 7px 20px 7px 28px;
+  font-size: 13px; color: var(--text-sec);
+  text-decoration: none; cursor: pointer;
+  border-left: 2px solid transparent; transition: .2s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nav-item:hover, .nav-item.active {
+  color: var(--primary); border-left-color: var(--primary);
+  background: rgba(37,99,235,.05);
+}
+.main {
+  flex: 1; padding: 32px 40px; max-width: 960px;
+  overflow-y: auto;
+}
+.main h1 {
+  font-size: 28px; font-weight: 800; margin-bottom: 4px;
+}
+.main h1 small { font-size: 14px; font-weight: 400; color: var(--text-sec); }
+.main h2 {
+  font-size: 22px; font-weight: 700; margin: 32px 0 12px;
+  padding-bottom: 8px; border-bottom: 2px solid var(--primary);
+}
+.main h3 { font-size: 17px; font-weight: 600; margin: 24px 0 8px; }
+.main h4 { font-size: 14px; font-weight: 600; margin: 16px 0 6px; color: var(--text-sec); }
+.main p { margin: 8px 0; line-height: 1.7; }
+.main ul, .main ol { margin: 8px 0; padding-left: 24px; }
+.main li { margin: 4px 0; line-height: 1.6; }
+.main pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; overflow-x: auto;
+  font-size: 13px; line-height: 1.5; margin: 12px 0;
+  font-family: 'JetBrains Mono', 'Cascadia Code', monospace;
+}
+.main code {
+  background: var(--code-bg); padding: 2px 6px;
+  border-radius: 4px; font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.main pre code { background: none; padding: 0; }
+.main table {
+  width: 100%; border-collapse: collapse; margin: 12px 0;
+  font-size: 13px;
+}
+.main th, .main td {
+  border: 1px solid var(--border); padding: 8px 12px;
+  text-align: left;
+}
+.main th {
+  background: var(--code-bg); font-weight: 600; font-size: 12px;
+  text-transform: uppercase; letter-spacing: .03em;
+}
+.main blockquote {
+  border-left: 3px solid var(--primary); padding: 8px 16px;
+  margin: 12px 0; background: var(--code-bg);
+  border-radius: 0 8px 8px 0; font-size: 13px;
+  color: var(--text-sec);
+}
+.main hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+.section { display: none; }
+.section.active { display: block; }
+.top-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.theme-toggle {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 999px; padding: 6px 12px; cursor: pointer;
+  color: var(--text); font-size: 13px; display: flex;
+  align-items: center; gap: 6px; transition: .2s;
+}
+.theme-toggle:hover { border-color: var(--primary); }
+.tag {
+  display: inline-block; padding: 2px 8px; border-radius: 6px;
+  font-size: 11px; font-weight: 600; margin: 0 2px;
+}
+.tag-blue { background: #dbeafe; color: #1d4ed8; }
+.tag-green { background: #d1fae5; color: #065f46; }
+.tag-red { background: #fee2e2; color: #991b1b; }
+.tag-purple { background: #ede9fe; color: #5b21b6; }
+.tag-orange { background: #ffedd5; color: #9a3412; }
+.highlight { background: #fef08a; padding: 0 2px; }
+.subtitle { font-size: 14px; color: var(--text-sec); margin-bottom: 16px; }
+@media (max-width: 768px) {
+  .sidebar { width: 100%; height: auto; position: relative; }
+  body { flex-direction: column; }
+  .main { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1>🏊 Swim CRM</h1>
+    <div class="version">v1.8.0 — Documentación Técnica</div>
+  </div>
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Buscar...">
+  </div>
+  <div id="nav"></div>
+</aside>
+
+<div class="main" id="main">
+  <div class="top-bar">
+    <div>
+      <h1>Swim CRM <small>v1.8.0</small></h1>
+      <div class="subtitle">Sistema CRM para gestión de tickets, clientes, tiendas y envíos</div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="themeIcon">☀️</span> <span id="themeLabel">Claro</span>
+    </button>
+  </div>
+  <hr>
+  <div id="content"></div>
+</div>
+
+<script>
+const theme = localStorage.getItem('theme') || 'light';
+if (theme === 'dark') document.body.classList.add('dark');
+document.getElementById('themeIcon').textContent = theme === 'dark' ? '🌙' : '☀️';
+document.getElementById('themeLabel').textContent = theme === 'dark' ? 'Oscuro' : 'Claro';
+
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = isDark ? 'Oscuro' : 'Claro';
+}
+
+const sections = {
+  inicio: { label: 'Inicio', icon: '🏠' },
+  backend: {
+    label: 'Backend',
+    children: {
+      'backend-stack': 'Stack Tecnológico',
+      'backend-arquitectura': 'Arquitectura',
+      'backend-server': 'Punto de Entrada',
+      'backend-db': 'Config. Base de Datos',
+      'backend-middleware': 'Middleware',
+      'backend-controllers': 'Controladores',
+      'backend-routes': 'Rutas y Endpoints',
+      'backend-services': 'Servicios',
+      'backend-utils': 'Utilidades',
+      'backend-schemas': 'Schemas Zod',
+      'backend-templates': 'Templates Email',
+      'backend-files': 'Manejo de Archivos',
+      'backend-notifications': 'Notificaciones',
+      'backend-comms': 'Comunicaciones',
+      'backend-users': 'Gestión de Usuarios',
+      'backend-security': 'Seguridad',
+      'backend-logging': 'Logging y Auditoría',
+      'backend-ratelimit': 'Rate Limiting',
+      'backend-env': 'Variables de Entorno',
+      'backend-patterns': 'Patrones de Diseño',
+    }
+  },
+  database: {
+    label: 'Base de Datos',
+    children: {
+      'db-general': 'Información General',
+      'db-tables': 'Esquema de Tablas',
+      'db-relations': 'Diagrama Relaciones',
+      'db-sequences': 'Secuencias',
+      'db-indexes': 'Índices',
+      'db-functions': 'Funciones Helper',
+      'db-rls': 'Políticas RLS',
+      'db-triggers': 'Triggers',
+      'db-procedures': 'Procedimientos',
+      'db-views': 'Vistas KPI',
+      'db-seed': 'Seed Data',
+    }
+  },
+  ui: {
+    label: 'UI / Frontend',
+    children: {
+      'ui-stack': 'Stack Tecnológico',
+      'ui-arquitectura': 'Arquitectura UI',
+      'ui-routing': 'Sistema de Ruteo',
+      'ui-design': 'Sistema de Diseño',
+      'ui-topbar': 'TopBar',
+      'ui-sidebar': 'Sidebar',
+      'ui-dashboard': 'Dashboard',
+      'ui-customers': 'Módulo Clientes',
+      'ui-tickets': 'Módulo Tickets',
+      'ui-tiendas': 'Módulo Tiendas',
+      'ui-config': 'Módulo Config.',
+      'ui-auth': 'Autenticación',
+      'ui-state': 'Gestión de Estado',
+      'ui-notifications': 'Notificaciones UI',
+      'ui-comms': 'Comunicaciones UI',
+      'ui-theme': 'Manejo de Temas',
+    }
+  },
+  deploy: {
+    label: 'Despliegue',
+    children: {
+      'deploy-requisitos': 'Requisitos',
+      'deploy-inicial': 'Despliegue Inicial',
+      'deploy-db': 'Conectividad DB',
+      'deploy-update': 'Actualización',
+      'deploy-cicd': 'CI/CD',
+      'deploy-commands': 'Comandos Útiles',
+      'deploy-security': 'Seguridad',
+    }
+  }
+};
+
+const content = {
+  inicio: `
+    <h2>🏊 Swim CRM — Documentación del Proyecto</h2>
+    <p>Sistema CRM diseñado para la gestión integral de tickets de soporte, clientes, tiendas, guías de envío y comunicaciones. Construido con <strong>Node.js + Express + TypeScript</strong> en el backend, <strong>React + NextUI + Tailwind</strong> en el frontend y <strong>SQL Server</strong> como base de datos.</p>
+
+    <h3>Arquitectura General</h3>
+    <pre>┌──────────────┐     ┌──────────────────┐     ┌──────────────┐
+│  Frontend    │────▶│  Backend (API)   │────▶│  SQL Server  │
+│  React+Vite  │     │  Express+TS      │     │  SwimmingCRM │
+│  :5173       │◀────│  :3000           │◀────│  :1433       │
+└──────────────┘     └──────────────────┘     └──────────────┘</pre>
+
+    <h3>Módulos del Sistema</h3>
+    <table>
+      <tr><th>Módulo</th><th>Descripción</th></tr>
+      <tr><td>Dashboard</td><td>Panel de control con KPIs, gráficos de tendencia y distribución</td></tr>
+      <tr><td>Tickets</td><td>Gestión completa de casos de soporte con filtros, soluciones y archivos</td></tr>
+      <tr><td>Clientes</td><td>Directorio de clientes con vista cards/lista, detalle lateral y comunicaciones</td></tr>
+      <tr><td>Tiendas</td><td>Gestión de tiendas, guías de envío, pedidos y evidencias de entrega</td></tr>
+      <tr><td>Configuración</td><td>Perfil de usuario, gestión de usuarios, roles, permisos y comunicaciones</td></tr>
+      <tr><td>Autenticación</td><td>Login, registro, recuperación de contraseña con JWT + cookies HttpOnly</td></tr>
+    </table>
+
+    <h3>Repositorio y Despliegue</h3>
+    <ul>
+      <li><strong>Frontend:</strong> Docker en puerto 8080</li>
+      <li><strong>Backend:</strong> Docker en puerto 3000</li>
+      <li><strong>Base de Datos:</strong> SQL Server externo o contenedor</li>
+      <li><strong>CI/CD:</strong> GitHub Actions con deploy automático vía SSH</li>
+    </ul>
+  `,
+
+  // ===== BACKEND =====
+  'backend-stack': `
+    <h2>Stack Tecnológico — Backend</h2>
+    <table>
+      <tr><th>Tecnología</th><th>Versión</th><th>Propósito</th></tr>
+      <tr><td>Node.js</td><td>20.x</td><td>Runtime del servidor</td></tr>
+      <tr><td>Express</td><td>4.x</td><td>Framework web HTTP</td></tr>
+      <tr><td>TypeScript</td><td>5.x</td><td>Tipado estático</td></tr>
+      <tr><td>mssql (tedious)</td><td>latest</td><td>Driver SQL Server</td></tr>
+      <tr><td>bcrypt</td><td>latest</td><td>Hash de contraseñas (12 rounds)</td></tr>
+      <tr><td>jsonwebtoken</td><td>latest</td><td>JWT</td></tr>
+      <tr><td>Zod</td><td>latest</td><td>Validación de schemas</td></tr>
+      <tr><td>Helmet</td><td>latest</td><td>Seguridad HTTP</td></tr>
+      <tr><td>CORS</td><td>latest</td><td>Control de orígenes</td></tr>
+      <tr><td>Winston</td><td>latest</td><td>Logging estructurado</td></tr>
+      <tr><td>Multer</td><td>latest</td><td>Uploads de archivos</td></tr>
+      <tr><td>Nodemailer</td><td>latest</td><td>Envío de correos SMTP</td></tr>
+      <tr><td>uuid</td><td>latest</td><td>Generación de UUIDs</td></tr>
+    </table>
+  `,
+
+  'backend-arquitectura': `
+    <h2>Arquitectura del Backend</h2>
+    <h3>Estructura de Directorios</h3>
+    <pre>backend/
+├── database/
+│   ├── swimming_all_db.sql
+│   ├── 003_add_sptienda_rls_rules.sql
+│   └── migrations/
+├── src/
+│   ├── config/db.ts
+│   ├── controllers/ (12 controladores)
+│   ├── middleware/ (auth.ts, validate.ts)
+│   ├── routes/ (11 archivos de rutas)
+│   ├── schemas/ (Zod)
+│   ├── services/ (email, notification)
+│   ├── templates/ (5 HTML emails)
+│   ├── utils/ (jwt, audit, logger)
+│   ├── check_db.ts
+│   └── server.ts
+├── uploads/
+├── logs/
+├── Dockerfile, .env, package.json</pre>
+
+    <h3>Patrones de Diseño</h3>
+    <ul>
+      <li><strong>Controller-Route-Separation:</strong> Cada dominio tiene su controlador y rutas</li>
+      <li><strong>RLS Context Pattern:</strong> Todas las queries pasan por <code>executeWithRLS()</code></li>
+      <li><strong>Transaction-based RLS:</strong> Operaciones complejas usan transacciones</li>
+      <li><strong>OUTPUT clause:</strong> INSERT/UPDATE retornan datos creados sin queries adicionales</li>
+      <li><strong>Lazy Import:</strong> Servicios se importan dinámicamente</li>
+      <li><strong>Dynamic SQL Building:</strong> Queries con filtros opcionales</li>
+    </ul>
+  `,
+
+  'backend-server': `
+    <h2>Punto de Entrada (server.ts)</h2>
+    <h3>Configuración Express</h3>
+    <pre>const app = express();
+const PORT = process.env.PORT || 3000;</pre>
+
+    <h3>Middlewares Globales</h3>
+    <table>
+      <tr><th>Orden</th><th>Middleware</th><th>Propósito</th></tr>
+      <tr><td>1</td><td>Morgan</td><td>Logging de peticiones HTTP</td></tr>
+      <tr><td>2</td><td>Helmet</td><td>Cabeceras de seguridad</td></tr>
+      <tr><td>3</td><td>CORS</td><td>Control de orígenes</td></tr>
+      <tr><td>4</td><td>cookie-parser</td><td>Parseo de cookies</td></tr>
+      <tr><td>5</td><td>express.json()</td><td>Parseo JSON</td></tr>
+    </table>
+
+    <h3>Rutas Registradas</h3>
+    <pre>app.use('/api/auth',          authRoutes);
+app.use('/api/customers',     customersRoutes);
+app.use('/api/tickets',       ticketsRoutes);
+app.use('/api/tiendas',       tiendasRoutes);
+app.use('/api/guias',         guiasRoutes);
+app.use('/api/marcas',        marcasRoutes);
+app.use('/api/pedidos',       pedidosRoutes);
+app.use('/api/files',         filesRoutes);
+app.use('/api/notifications', notificationsRoutes);
+app.use('/api/users',         userRoutes);
+app.use('/api/comms',         commsRoutes);
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));</pre>
+
+    <h3>Error Handler Global</h3>
+    <pre>app.use((err, req, res, next) => {
+  const message = process.env.NODE_ENV === 'production'
+    ? 'Error interno del servidor.'
+    : err.message;
+  res.status(err.status || 500).json({ error: message });
+});</pre>
+  `,
+
+  'backend-db': `
+    <h2>Configuración de Base de Datos</h2>
+    <h3>Conexión (db.ts)</h3>
+    <pre>const dbConfig = {
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  server: process.env.DB_SERVER || 'localhost',
+  port: parseInt(process.env.DB_PORT || '1433'),
+  options: {
+    encrypt: process.env.DB_ENCRYPT === 'true',
+    trustServerCertificate: process.env.DB_TRUST_CERT === 'true',
+  },
+};</pre>
+
+    <h3>RLS Context Pattern</h3>
+    <p><strong>Patrón 1 — Query simple (batch):</strong></p>
+    <pre>const request = pool.request();
+request.input('RLS_UserId', sql.UniqueIdentifier, userId);
+request.input('RLS_UserRole', sql.NVarChar(100), role);
+request.input('RLS_TiendaId', sql.UniqueIdentifier, tiendaId);
+
+const batch = \`
+  EXEC sp_set_session_context @key = N'UserId', @value = @RLS_UserId;
+  EXEC sp_set_session_context @key = N'UserRole', @value = @RLS_UserRole;
+  EXEC sp_set_session_context @key = N'TiendaId', @value = @RLS_TiendaId;
+  \${queryOrAction}
+\`;
+return request.query(batch);</pre>
+
+    <p><strong>Patrón 2 — Transacción:</strong></p>
+    <pre>const transaction = new sql.Transaction(pool);
+await transaction.begin();
+const request = transaction.request();
+// set RLS context...
+const result = await queryOrAction(request, transaction);
+await transaction.commit();</pre>
+  `,
+
+  'backend-middleware': `
+    <h2>Middleware de Autenticación y Autorización</h2>
+    <h3>authenticate</h3>
+    <pre>export const authenticate = (req, res, next) => {
+  let token = req.cookies?.token;
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith('Bearer '))
+      token = authHeader.split(' ')[1];
+  }
+  if (!token) return res.status(401).json({ error: 'Token requerido.' });
+  try {
+    const decoded = verifyToken(token);
+    req.user = decoded;
+    next();
+  } catch { res.status(401).json({ error: 'Token inválido.' }); }
+};</pre>
+
+    <h3>authorize(...allowedRoles)</h3>
+    <pre>export const authorize = (...allowedRoles) => (req, res, next) => {
+  if (!req.user) return res.status(401).json({ error: 'No autorizado.' });
+  if (!allowedRoles.includes(req.user.role))
+    return res.status(403).json({ error: 'Permisos insuficientes.' });
+  next();
+};</pre>
+
+    <h3>validate(schema) — Zod</h3>
+    <pre>export const validate = (schema) => async (req, res, next) => {
+  try {
+    await schema.parseAsync({ body: req.body, query: req.query, params: req.params });
+    next();
+  } catch (err) {
+    if (err instanceof ZodError)
+      return res.status(400).json({
+        error: 'Error de validación',
+        details: err.errors.map(e => ({ path: e.path.join('.'), message: e.message }))
+      });
+    res.status(500).json({ error: 'Error interno' });
+  }
+};</pre>
+  `,
+
+  'backend-controllers': `
+    <h2>Controladores</h2>
+
+    <h3>auth.controller.ts</h3>
+    <table>
+      <tr><th>Función</th><th>Método</th><th>Ruta</th></tr>
+      <tr><td>register</td><td>POST</td><td>/api/auth/register</td></tr>
+      <tr><td>login</td><td>POST</td><td>/api/auth/login</td></tr>
+      <tr><td>logout</td><td>POST</td><td>/api/auth/logout</td></tr>
+      <tr><td>getMe</td><td>GET</td><td>/api/auth/me</td></tr>
+      <tr><td>getFirstUser</td><td>GET</td><td>/api/auth/first-user</td></tr>
+      <tr><td>forgotPassword</td><td>POST</td><td>/api/auth/forgot-password</td></tr>
+      <tr><td>resetPassword</td><td>POST</td><td>/api/auth/reset-password</td></tr>
+    </table>
+    <p><strong>Login:</strong> Busca usuario por email, verifica bloqueo, bcrypt.compare, 3 intentos → 15 min bloqueo, JWT en cookie HttpOnly.</p>
+
+    <h3>tickets.controller.ts</h3>
+    <table>
+      <tr><th>Función</th><th>Método</th><th>Ruta</th></tr>
+      <tr><td>getNextTicketNumber</td><td>GET</td><td>/api/tickets/next-number</td></tr>
+      <tr><td>getTickets</td><td>GET</td><td>/api/tickets</td></tr>
+      <tr><td>getTicketById</td><td>GET</td><td>/api/tickets/:id</td></tr>
+      <tr><td>createTicket</td><td>POST</td><td>/api/tickets</td></tr>
+      <tr><td>updateTicket</td><td>PUT</td><td>/api/tickets/:id</td></tr>
+      <tr><td>deleteTicket</td><td>DELETE</td><td>/api/tickets/:id</td></tr>
+      <tr><td>addSolucion</td><td>POST</td><td>/api/tickets/:id/soluciones</td></tr>
+      <tr><td>getTicketLookups</td><td>GET</td><td>/api/tickets/lookups</td></tr>
+      <tr><td>getDashboardStats</td><td>GET</td><td>/api/tickets/dashboard/stats</td></tr>
+    </table>
+
+    <h3>customers.controller.ts</h3>
+    <p>CRUD completo con soft-delete (<code>deleted_at</code>), filtros por nombre/cédula/email, tipo de comercio, paginación.</p>
+
+    <h3>Otros controladores:</h3>
+    <ul>
+      <li><strong>tiendas.controller.ts:</strong> CRUD de tiendas</li>
+      <li><strong>guias.controller.ts:</strong> Guías de envío con pedidos + notificaciones</li>
+      <li><strong>pedidos.controller.ts:</strong> Creación de pedidos individuales</li>
+      <li><strong>marcas.controller.ts:</strong> Listar marcas</li>
+      <li><strong>notifications.controller.ts:</strong> Notificaciones CRUD + mark read</li>
+      <li><strong>user.controller.ts:</strong> Invitación, eliminación, roles, permisos</li>
+      <li><strong>comms.controller.ts:</strong> Config. comunicaciones, templates, envío email</li>
+      <li><strong>files.controller.ts:</strong> Upload/download seguro de archivos</li>
+    </ul>
+  `,
+
+  'backend-routes': `
+    <h2>Rutas y Endpoints</h2>
+
+    <h3>Auth</h3>
+    <table>
+      <tr><th>Método</th><th>Ruta</th><th>Auth</th></tr>
+      <tr><td>GET</td><td>/api/auth/first-user</td><td>—</td></tr>
+      <tr><td>POST</td><td>/api/auth/register</td><td>—</td></tr>
+      <tr><td>POST</td><td>/api/auth/login</td><td>—</td></tr>
+      <tr><td>POST</td><td>/api/auth/logout</td><td>—</td></tr>
+      <tr><td>GET</td><td>/api/auth/me</td><td>authenticate</td></tr>
+      <tr><td>POST</td><td>/api/auth/forgot-password</td><td>—</td></tr>
+      <tr><td>POST</td><td>/api/auth/reset-password</td><td>—</td></tr>
+    </table>
+
+    <h3>Tickets</h3>
+    <table>
+      <tr><th>Método</th><th>Ruta</th><th>Auth</th></tr>
+      <tr><td>GET</td><td>/api/tickets/lookups</td><td>✓</td></tr>
+      <tr><td>GET</td><td>/api/tickets/dashboard/stats</td><td>✓</td></tr>
+      <tr><td>GET</td><td>/api/tickets/next-number</td><td>✓</td></tr>
+      <tr><td>GET</td><td>/api/tickets</td><td>✓</td></tr>
+      <tr><td>GET</td><td>/api/tickets/:id</td><td>✓</td></tr>
+      <tr><td>POST</td><td>/api/tickets</td><td>✓</td></tr>
+      <tr><td>PUT</td><td>/api/tickets/:id</td><td>✓</td></tr>
+      <tr><td>DELETE</td><td>/api/tickets/:id</td><td>✓ (admin)</td></tr>
+      <tr><td>POST</td><td>/api/tickets/:id/soluciones</td><td>✓</td></tr>
+    </table>
+
+    <h3>Clientes</h3>
+    <table>
+      <tr><th>Método</th><th>Ruta</th></tr>
+      <tr><td>GET</td><td>/api/customers</td></tr>
+      <tr><td>GET</td><td>/api/customers/:id</td></tr>
+      <tr><td>POST</td><td>/api/customers</td></tr>
+      <tr><td>PUT</td><td>/api/customers/:id</td></tr>
+      <tr><td>DELETE</td><td>/api/customers/:id</td></tr>
+      <tr><td>PUT</td><td>/api/customers/:id/restore</td></tr>
+      <tr><td>GET</td><td>/api/customers/:id/tickets</td></tr>
+    </table>
+
+    <h3>Usuarios</h3>
+    <table>
+      <tr><th>Método</th><th>Ruta</th><th>Auth</th></tr>
+      <tr><td>GET</td><td>/api/users</td><td>✓</td></tr>
+      <tr><td>POST</td><td>/api/users/invite</td><td>✓ admin</td></tr>
+      <tr><td>GET</td><td>/api/users/:id/permissions</td><td>✓ admin</td></tr>
+      <tr><td>PUT</td><td>/api/users/:id/permissions</td><td>✓ admin</td></tr>
+      <tr><td>PUT</td><td>/api/users/:id/profile</td><td>✓</td></tr>
+      <tr><td>PUT</td><td>/api/users/:id/password</td><td>✓</td></tr>
+      <tr><td>PUT</td><td>/api/users/:id/role</td><td>✓ admin</td></tr>
+      <tr><td>DELETE</td><td>/api/users/:id</td><td>✓ admin</td></tr>
+      <tr><td>GET</td><td>/api/roles</td><td>✓</td></tr>
+      <tr><td>GET</td><td>/api/permissions</td><td>✓</td></tr>
+    </table>
+
+    <h3>Otros Endpoints</h3>
+    <table>
+      <tr><th>Módulo</th><th>Método</th><th>Ruta</th></tr>
+      <tr><td>Tiendas</td><td>GET/POST/PUT</td><td>/api/tiendas</td></tr>
+      <tr><td>Guías</td><td>GET/POST/PUT</td><td>/api/guias</td></tr>
+      <tr><td>Pedidos</td><td>POST</td><td>/api/pedidos</td></tr>
+      <tr><td>Marcas</td><td>GET</td><td>/api/marcas</td></tr>
+      <tr><td>Archivos</td><td>POST/GET/DELETE</td><td>/api/files</td></tr>
+      <tr><td>Notificaciones</td><td>GET/PUT/POST</td><td>/api/notifications</td></tr>
+      <tr><td>Comms</td><td>GET/PUT/POST</td><td>/api/comms</td></tr>
+      <tr><td>Health</td><td>GET</td><td>/api/health</td></tr>
+    </table>
+  `,
+
+  'backend-services': `
+    <h2>Servicios</h2>
+    <h3>EmailService (email.service.ts)</h3>
+    <p><strong>Prioridad de proveedores:</strong> SMTP → Resend API → Sin proveedor</p>
+    <pre>private static transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: parseInt(process.env.SMTP_PORT || '587'),
+  secure: process.env.SMTP_SECURE === 'true',
+  auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+});</pre>
+
+    <p><strong>Métodos:</strong></p>
+    <ul>
+      <li><code>sendEmail({ to, subject, html })</code> — Envía email vía SMTP o Resend</li>
+      <li><code>getInvitationHtml(name, url)</code> — Template de invitación</li>
+      <li><code>getPasswordResetHtml(name, url)</code> — Template reset password</li>
+      <li><code>getGuiaNotificationHtml(...)</code> — Template guía de envío</li>
+      <li><code>getTicketAssignedHtml(data)</code> — Template ticket asignado</li>
+      <li><code>getRegistrationConfirmationHtml(name, email)</code> — Confirmación de registro</li>
+    </ul>
+
+    <h3>NotificationService (notification.service.ts)</h3>
+    <p><strong>Métodos:</strong></p>
+    <ul>
+      <li><code>notify(config)</code> — Crea notificación + email opcional</li>
+      <li><code>notifyNuevaGuia(tiendaId, guiaId, numeroGuia, pedidos)</code> — Notifica nueva guía</li>
+      <li><code>notifyTicketAssigned(ticketId, userId, ticketInfo)</code> — Notifica ticket asignado</li>
+    </ul>
+  `,
+
+  'backend-utils': `
+    <h2>Utilidades</h2>
+    <h3>JWT (jwt.ts)</h3>
+    <pre>const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '8h';
+
+export interface JwtPayload {
+  userId: string; email: string; role: string; roleId: string;
+}
+
+export const generateToken = (payload, expiresIn = JWT_EXPIRES_IN) =>
+  jwt.sign(payload, JWT_SECRET, { expiresIn });
+
+export const verifyToken = (token) =>
+  jwt.verify(token, JWT_SECRET) as JwtPayload;</pre>
+
+    <h3>Audit (audit.ts)</h3>
+    <pre>export const logAudit = async (userId, userRole, action, details, ipAddress?, userAgent?) => {
+  await executeWithRLS(userId, userRole, async (request) => {
+    await request.input(...).query(\`INSERT INTO dbo.audit_log ...\`);
+  });
+};</pre>
+    <p>Acciones auditadas: <code>user_registered</code>, <code>user_login</code>, <code>user_invited</code>, <code>user_deleted</code>, <code>notify_guia</code>, <code>send_email</code>, etc.</p>
+
+    <h3>Logger (logger.ts) — Winston</h3>
+    <table>
+      <tr><th>Transport</th><th>Nivel</th><th>Archivo</th><th>Retención</th></tr>
+      <tr><td>DailyRotateFile</td><td>error</td><td>logs/error-YYYY-MM-DD.log</td><td>30 días</td></tr>
+      <tr><td>DailyRotateFile</td><td>debug/info</td><td>logs/combined-YYYY-MM-DD.log</td><td>30 días</td></tr>
+      <tr><td>Console</td><td>debug</td><td>stdout</td><td>solo dev</td></tr>
+    </table>
+  `,
+
+  'backend-schemas': `
+    <h2>Schemas de Validación (Zod)</h2>
+    <h3>auth.schema.ts</h3>
+    <pre>export const loginSchema = z.object({
+  body: z.object({
+    email: z.string().min(1, 'El email es requerido').email('Email inválido'),
+    password: z.string().min(6, 'Mínimo 6 caracteres'),
+  }),
+});
+
+export const registerSchema = z.object({
+  body: z.object({
+    email: z.string().min(1).email('Email inválido'),
+    password: z.string().min(6),
+    full_name: z.string().min(3).optional(),
+  }),
+});</pre>
+
+    <h3>ticket.schema.ts</h3>
+    <pre>export const createTicketSchema = z.object({
+  body: z.object({
+    cliente_id: z.string().uuid('ID de cliente inválido'),
+    asunto: z.string().min(5),
+    descripcion: z.string().min(10),
+    prioridad: z.enum(['Baja', 'Media', 'Alta', 'Urgente']).optional(),
+  }),
+});
+
+export const updateTicketSchema = z.object({
+  body: z.object({
+    asunto: z.string().min(5).optional(),
+    descripcion: z.string().min(10).optional(),
+    prioridad: z.enum(['Baja', 'Media', 'Alta', 'Urgente']).optional(),
+    estado: z.string().optional(),
+    agente_asignado_id: z.string().uuid().nullable().optional(),
+  }),
+});</pre>
+  `,
+
+  'backend-templates': `
+    <h2>Templates de Email</h2>
+    <table>
+      <tr><th>Archivo</th><th>Placeholders</th><th>Propósito</th></tr>
+      <tr><td>invitation.html</td><td>{{name}}, {{url}}</td><td>Invitación a configurar cuenta</td></tr>
+      <tr><td>password-reset.html</td><td>{{name}}, {{url}}</td><td>Restablecer contraseña</td></tr>
+      <tr><td>registration-confirmation.html</td><td>{{name}}, {{email}}</td><td>Confirmación de registro</td></tr>
+      <tr><td>guia-notification.html</td><td>{{storeName}}, {{guiaNumber}}, {{pedidosCount}}, {{pedidosList}}</td><td>Notificación de guía</td></tr>
+      <tr><td>ticket-assigned.html</td><td>{{agentName}}, {{ticketNumber}}, {{clientName}}, ...</td><td>Ticket asignado a agente</td></tr>
+    </table>
+    <p>Todos los templates tienen header azul (#0070f3) con "Swim CRM", footer con copyright y nota de correo automático.</p>
+  `,
+
+  'backend-files': `
+    <h2>Manejo de Archivos</h2>
+    <h3>Configuración Multer</h3>
+    <pre>const UPLOADS_DIR = path.join(process.cwd(), 'uploads');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, UPLOADS_DIR),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, \`\${Date.now()}_\${uuidv4()}\${ext}\`);
+  },
+});
+
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB</pre>
+
+    <h3>Endpoints</h3>
+    <table>
+      <tr><th>Endpoint</th><th>Método</th><th>Descripción</th></tr>
+      <tr><td>/api/files/upload</td><td>POST</td><td>Subir archivo de ticket</td></tr>
+      <tr><td>/api/files/evidence</td><td>POST</td><td>Subir evidencia de entrega</td></tr>
+      <tr><td>/api/files/ticket/:ticketId</td><td>GET</td><td>Listar archivos de ticket</td></tr>
+      <tr><td>/api/files/download/:filename</td><td>GET</td><td>Descarga segura con RLS</td></tr>
+      <tr><td>/api/files/:id</td><td>DELETE</td><td>Eliminar archivo</td></tr>
+    </table>
+    <p><strong>Seguridad:</strong> Sin acceso público a /uploads. Descarga protegida por autenticación + RLS.</p>
+  `,
+
+  'backend-notifications': `
+    <h2>Sistema de Notificaciones</h2>
+    <h3>Tipos de Notificación</h3>
+    <table>
+      <tr><th>Tipo</th><th>Descripción</th><th>Email</th></tr>
+      <tr><td>ticket_asignado</td><td>Ticket asignado a agente</td><td>Sí</td></tr>
+      <tr><td>nueva_guia</td><td>Nueva guía creada</td><td>Sí (tienda)</td></tr>
+      <tr><td>guia_recibida</td><td>Guía recibida en tienda</td><td>No</td></tr>
+      <tr><td>paquete_entregado</td><td>Paquete entregado</td><td>No</td></tr>
+    </table>
+    <h3>Flujo</h3>
+    <pre>1. Evento ocurre (crear guía, asignar ticket)
+2. NotificationService.notify()
+3. INSERT en dbo.notificaciones (bypass RLS con admin context)
+4. Si sendEmail = true → EmailService.sendEmail()
+5. Frontend polling cada 5 min a GET /api/notifications/unread</pre>
+  `,
+
+  'backend-comms': `
+    <h2>Sistema de Comunicaciones</h2>
+    <h3>Marcas con Datos de Contacto</h3>
+    <p>Campos en <code>dbo.marcas</code>: <code>whatsapp_numero</code>, <code>email_remitente</code>, <code>telefono_soporte</code></p>
+
+    <h3>Templates de Comunicación</h3>
+    <p>Tabla <code>dbo.config_comunicaciones</code> con placeholders: <code>{{nombre}}</code>, <code>{{apellido}}</code>, <code>{{cedula}}</code>, <code>{{telefono}}</code></p>
+
+    <h3>Envío de Emails</h3>
+    <ol>
+      <li>Usuario selecciona marca remitente</li>
+      <li>Selecciona plantilla (opcional)</li>
+      <li>Placeholders se interpolan con datos del cliente</li>
+      <li>POST /api/comms/send-email → EmailService.sendEmail()</li>
+    </ol>
+
+    <h3>Gestión de Configuraciones (.env)</h3>
+    <p>Solo super_admin puede leer/actualizar configuraciones vía <code>GET/PUT /api/comms/settings</code></p>
+  `,
+
+  'backend-users': `
+    <h2>Gestión de Usuarios</h2>
+    <h3>Flujo de Invitación</h3>
+    <pre>1. Admin envía: email, fullName, roleId, storeName?, permissions[]
+2. Backend verifica email no existe
+3. Genera userId, tempPassword (UUID), hash bcrypt
+4. Transacción: INSERT perfil → (si SPTienda: INSERT tienda → UPDATE perfil) → INSERT permisos
+5. Commit → genera inviteToken (24h) → envía email
+6. Usuario hace click → establece contraseña → activa tienda</pre>
+
+    <h3>Flujo de Eliminación</h3>
+    <pre>Transacción de 10 pasos:
+1. Si SPTienda: desvincular perfiles → DELETE tienda
+2-8. Desvincular: tiendas, guías, tickets, soluciones, clientes, permisos, audit_log, rate limits
+9. DELETE perfil</pre>
+
+    <h3>Roles</h3>
+    <ul>
+      <li><span class="tag tag-red">super_admin</span> — Acceso total</li>
+      <li><span class="tag tag-blue">admin</span> — Administrador</li>
+      <li><span class="tag tag-green">user</span> — Usuario estándar</li>
+      <li><span class="tag tag-orange">SPTienda</span> — Punto de venta</li>
+    </ul>
+
+    <h3>Permisos</h3>
+    <p><code>tickets:view</code>, <code>tickets:create</code>, <code>tickets:edit</code>, <code>tickets:delete</code>, <code>customers:view</code>, <code>customers:create</code>, <code>customers:edit</code>, <code>customers:delete</code>, <code>dashboard:view</code>, <code>admin:users</code></p>
+  `,
+
+  'backend-security': `
+    <h2>Seguridad y Hardening</h2>
+    <table>
+      <tr><th>Medida</th><th>Descripción</th></tr>
+      <tr><td>Cookies HttpOnly</td><td>JWT en cookie HttpOnly (no localStorage)</td></tr>
+      <tr><td>Helmet</td><td>Cabeceras de seguridad HTTP</td></tr>
+      <tr><td>CORS estricto</td><td>Orígenes permitidos vía ALLOWED_ORIGINS</td></tr>
+      <tr><td>Cifrado DB</td><td>encrypt: true en producción</td></tr>
+      <tr><td>Archivos protegidos</td><td>Sin acceso público a /uploads</td></tr>
+      <tr><td>Error boundary</td><td>No expone stack traces en producción</td></tr>
+      <tr><td>Rate limiting</td><td>Auth: 20 req/15min, API: 500 req/15min</td></tr>
+      <tr><td>Validación Zod</td><td>Esquemas en rutas críticas</td></tr>
+      <tr><td>RLS en SQL Server</td><td>Aislamiento de datos por rol/tienda</td></tr>
+      <tr><td>Bcrypt 12 rounds</td><td>Hash de contraseñas</td></tr>
+      <tr><td>Account lockout</td><td>3 intentos → 15 min bloqueo</td></tr>
+      <tr><td>Audit log</td><td>Registro de acciones sensibles</td></tr>
+      <tr><td>Triggers de protección</td><td>Previene eliminación de super_admin</td></tr>
+    </table>
+  `,
+
+  'backend-logging': `
+    <h2>Logging y Auditoría</h2>
+    <h3>Logging de Peticiones (Morgan)</h3>
+    <p>Formato <strong>combined</strong> de Apache, redirigido a Winston.</p>
+
+    <h3>Logging de Aplicación (Winston)</h3>
+    <table>
+      <tr><th>Nivel</th><th>Uso</th></tr>
+      <tr><td>error</td><td>Errores críticos</td></tr>
+      <tr><td>warn</td><td>Advertencias</td></tr>
+      <tr><td>info</td><td>Información general (producción)</td></tr>
+      <tr><td>debug</td><td>Debugging (desarrollo)</td></tr>
+    </table>
+
+    <h3>Auditoría (audit_log)</h3>
+    <p>Acciones auditadas: <code>user_registered</code>, <code>user_login</code>, <code>user_invited</code>, <code>user_deleted</code>, <code>user_role_updated</code>, <code>user_permissions_updated</code>, <code>user_profile_updated</code>, <code>user_password_updated</code>, <code>notify_guia</code>, <code>send_email</code></p>
+    <p>Limpieza automática: registros > 90 días eliminados por <code>usp_cleanup_system</code></p>
+  `,
+
+  'backend-ratelimit': `
+    <h2>Rate Limiting</h2>
+    <table>
+      <tr><th>Endpoint</th><th>Window</th><th>Max (prod)</th></tr>
+      <tr><td>/api/auth/login</td><td>15 min</td><td>20</td></tr>
+      <tr><td>/api/auth/register</td><td>15 min</td><td>20</td></tr>
+      <tr><td>/api/auth/forgot-password</td><td>15 min</td><td>20</td></tr>
+      <tr><td>/api/* (general)</td><td>15 min</td><td>500</td></tr>
+    </table>
+    <p>Deshabilitado en desarrollo (max: 0, skip: isDev)</p>
+  `,
+
+  'backend-env': `
+    <h2>Variables de Entorno</h2>
+    <table>
+      <tr><th>Variable</th><th>Descripción</th><th>Requerida</th></tr>
+      <tr><td>PORT</td><td>Puerto del servidor</td><td>No (default: 3000)</td></tr>
+      <tr><td>DB_USER</td><td>Usuario SQL Server</td><td>Sí</td></tr>
+      <tr><td>DB_PASSWORD</td><td>Contraseña SQL Server</td><td>Sí</td></tr>
+      <tr><td>DB_NAME</td><td>Nombre BD</td><td>Sí</td></tr>
+      <tr><td>DB_SERVER</td><td>Servidor SQL Server</td><td>No (default: localhost)</td></tr>
+      <tr><td>DB_PORT</td><td>Puerto SQL Server</td><td>No (default: 1433)</td></tr>
+      <tr><td>DB_ENCRYPT</td><td>Cifrado conexión</td><td>No</td></tr>
+      <tr><td>JWT_SECRET</td><td>Secreto JWT</td><td>Sí</td></tr>
+      <tr><td>JWT_EXPIRES_IN</td><td>Expiración token</td><td>No (default: 8h)</td></tr>
+      <tr><td>SITE_URL</td><td>URL frontend</td><td>No</td></tr>
+      <tr><td>ALLOWED_ORIGINS</td><td>Orígenes CORS</td><td>No</td></tr>
+      <tr><td>RESEND_API_KEY</td><td>API key Resend</td><td>No</td></tr>
+      <tr><td>SMTP_HOST/PORT/USER/PASS/FROM</td><td>Config SMTP</td><td>No</td></tr>
+      <tr><td>NODE_ENV</td><td>Entorno</td><td>No</td></tr>
+    </table>
+  `,
+
+  'backend-patterns': `
+    <h2>Patrones de Diseño</h2>
+    <ul>
+      <li><strong>Controller-Route-Separation:</strong> Cada dominio tiene controlador + rutas independientes</li>
+      <li><strong>RLS Context Pattern:</strong> Todas las queries pasan por <code>executeWithRLS()</code></li>
+      <li><strong>Transaction-based RLS:</strong> Operaciones complejas en transacciones</li>
+      <li><strong>OUTPUT clause:</strong> INSERT/UPDATE retornan datos sin queries extra</li>
+      <li><strong>Dynamic SQL Building:</strong> Queries se construyen con filtros opcionales</li>
+      <li><strong>Lazy import:</strong> Servicios importados bajo demanda</li>
+    </ul>
+
+    <h3>Convenciones</h3>
+    <ul>
+      <li>Imports: rutas relativas desde <code>src/</code></li>
+      <li>Naming: camelCase funciones/variables, PascalCase clases</li>
+      <li>Tipado: Interfaces TypeScript para request/response</li>
+      <li>Respuestas exitosas: <code>{ data, message }</code> o <code>{ data, pagination }</code></li>
+    </ul>
+  `,
+
+  // ===== DATABASE =====
+  'db-general': `
+    <h2>Base de Datos — Información General</h2>
+    <table>
+      <tr><th>Propiedad</th><th>Valor</th></tr>
+      <tr><td>Motor</td><td>Microsoft SQL Server</td></tr>
+      <tr><td>Nombre BD</td><td>SwimmingCRM</td></tr>
+      <tr><td>Collation</td><td>Latin1_General_CI_AS</td></tr>
+      <tr><td>Esquema principal</td><td>dbo</td></tr>
+      <tr><td>Esquema seguridad</td><td>Security</td></tr>
+      <tr><td>Total tablas</td><td>26</td></tr>
+      <tr><td>Secuencias</td><td>4</td></tr>
+      <tr><td>Índices</td><td>20</td></tr>
+      <tr><td>Políticas RLS</td><td>6</td></tr>
+      <tr><td>Triggers</td><td>4</td></tr>
+      <tr><td>Vistas KPI</td><td>2</td></tr>
+      <tr><td>Procedimientos</td><td>1</td></tr>
+      <tr><td>Funciones</td><td>8</td></tr>
+    </table>
+
+    <h3>Script Master</h3>
+    <p>El archivo <code>swimming_all_db.sql</code> es <strong>idempotente</strong> y ejecuta en orden:</p>
+    <ol>
+      <li>Desactiva políticas RLS existentes</li>
+      <li>Crea esquema Security</li>
+      <li>Crea todas las tablas (con verificación IF OBJECT_ID IS NULL)</li>
+      <li>Agrega columnas incrementales</li>
+      <li>Crea índices (con IF NOT EXISTS)</li>
+      <li>Crea secuencias</li>
+      <li>Crea funciones helper y predicados RLS</li>
+      <li>Crea políticas de seguridad</li>
+      <li>Crea triggers</li>
+      <li>Crea procedimientos</li>
+      <li>Inserta seed data (idempotente)</li>
+    </ol>
+  `,
+
+  'db-tables': `
+    <h2>Esquema Completo de Tablas (26 tablas)</h2>
+
+    <h3>Seguridad & Auth</h3>
+
+    <h4>dbo.roles</h4>
+    <table>
+      <tr><th>Columna</th><th>Tipo</th><th>Constraints</th></tr>
+      <tr><td>id</td><td>UNIQUEIDENTIFIER</td><td>PK, DEFAULT NEWID()</td></tr>
+      <tr><td>name</td><td>NVARCHAR(100)</td><td>NOT NULL, UNIQUE</td></tr>
+      <tr><td>description</td><td>NVARCHAR(MAX)</td><td>—</td></tr>
+      <tr><td>created_at</td><td>DATETIMEOFFSET</td><td>NOT NULL</td></tr>
+    </table>
+    <p>Roles: <span class="tag tag-red">super_admin</span> <span class="tag tag-blue">admin</span> <span class="tag tag-green">user</span> <span class="tag tag-orange">SPTienda</span></p>
+
+    <h4>dbo.profiles</h4>
+    <table>
+      <tr><th>Columna</th><th>Tipo</th><th>Descripción</th></tr>
+      <tr><td>id</td><td>UNIQUEIDENTIFIER</td><td>PK</td></tr>
+      <tr><td>email</td><td>NVARCHAR(255)</td><td>NOT NULL, UNIQUE</td></tr>
+      <tr><td>password_hash</td><td>NVARCHAR(MAX)</td><td>Hash bcrypt (12 rounds)</td></tr>
+      <tr><td>role_id</td><td>UNIQUEIDENTIFIER</td><td>FK → roles(id)</td></tr>
+      <tr><td>tienda_id</td><td>UNIQUEIDENTIFIER</td><td>FK → tiendas(id)</td></tr>
+      <tr><td>failed_attempts</td><td>INT</td><td>Default 0</td></tr>
+      <tr><td>lockout_until</td><td>DATETIMEOFFSET</td><td>Bloqueo 15 min tras 3 intentos</td></tr>
+    </table>
+
+    <h4>dbo.permissions / role_permissions / user_permissions</h4>
+    <p>Permisos: <code>tickets:view/create/edit/delete</code>, <code>customers:view/create/edit/delete</code>, <code>dashboard:view</code>, <code>admin:users</code></p>
+
+    <h3>Tablas de Referencia (Lookups)</h3>
+    <ul>
+      <li><strong>ciudades:</strong> 48 ciudades de Colombia (IDENTITY)</li>
+      <li><strong>marcas:</strong> Speedo, O'Neill — con whatsapp_numero, email_remitente, telefono_soporte</li>
+      <li><strong>motivo_contacto:</strong> 8 motivos (change_size, warranty, return, pqr, etc.)</li>
+      <li><strong>sub_motivos:</strong> 6 sub-motivos bajo coordinator_update</li>
+      <li><strong>estados_casos:</strong> Abierto, En Proceso, Pendiente, Resuelto, Cerrado, Cancelado</li>
+      <li><strong>tallas:</strong> 18 tallas (XXS a 46)</li>
+      <li><strong>referencias_productos:</strong> SKU por marca</li>
+      <li><strong>tipos_comercio:</strong> Tienda Física, Ecommerce</li>
+    </ul>
+
+    <h3>Tablas de Negocio</h3>
+    <p><strong>tiendas:</strong> id, id_marcas, nombre, numero_bodega, ciudad, dirección, teléfono, email, admin_id, is_active, id_tipo_comercio</p>
+    <p><strong>customers:</strong> id_cliente (IDENTITY), cedula (UNIQUE), nombre, apellido, teléfono, email, deleted_at (soft delete)</p>
+    <p><strong>tickets:</strong> id_ticket (IDENTITY), ticket_numero (UNIQUE), id_cliente, id_marcas, id_motivo_caso, id_estado_caso, +21 columnas</p>
+    <p><strong>soluciones_tickets:</strong> id_solucion, id_ticket, id_cliente, nota_credito, nuevo_pedido, cst, descripcion_solucion</p>
+
+    <h3>Tablas de Logística y Sistema</h3>
+    <p><strong>guias_envio:</strong> Guías de envío con estado (pendiente/recibido/completo)</p>
+    <p><strong>pedidos_guia:</strong> Pedidos asociados a guía</p>
+    <p><strong>pedido_evidencias:</strong> Evidencias de entrega (fotos/PDF)</p>
+    <p><strong>ticket_archivos:</strong> Archivos adjuntos a tickets</p>
+    <p><strong>notificaciones:</strong> Sistema de notificaciones internas</p>
+    <p><strong>config_comunicaciones:</strong> Plantillas email/whatsapp con placeholders</p>
+    <p><strong>email_rate_limit / invite_rate_limit:</strong> Control de rate limiting</p>
+    <p><strong>audit_log:</strong> Registro de auditoría</p>
+  `,
+
+  'db-relations': `
+    <h2>Diagrama de Relaciones</h2>
+    <pre>roles (1) ────< (N) profiles
+profiles (1) ────< (N) user_permissions
+roles (1) ────< (N) role_permissions
+permissions (1) ────< (N) role_permissions / user_permissions
+
+marcas (1) ────< (N) referencias_productos / tiendas / tickets / config_comunicaciones
+motivo_contacto (1) ────< (N) sub_motivos / tickets
+estados_casos (1) ────< (N) tickets
+tallas (1) ────< (N) tickets (talla_actual / nueva_talla)
+ciudades (1) ────< (N) customers
+tipos_comercio (1) ────< (N) customers / tiendas / tickets
+
+profiles (1) ────< (N) customers / tickets / tiendas / guias_envio / ticket_archivos / pedido_evidencias / soluciones_tickets / notificaciones / audit_log
+
+customers (1) ────< (N) tickets (ON DELETE CASCADE) / soluciones_tickets
+tickets (1) ────< (N) soluciones_tickets / ticket_archivos (ON DELETE CASCADE)
+tiendas (1) ────< (N) guias_envio / pedido_evidencias
+guias_envio (1) ────< (N) pedidos_guia / pedido_evidencias
+pedidos_guia (1) ────< (N) pedido_evidencias</pre>
+  `,
+
+  'db-sequences': `
+    <h2>Secuencias</h2>
+    <table>
+      <tr><th>Secuencia</th><th>Prefijo</th><th>Uso</th></tr>
+      <tr><td>seq_ticket_stk</td><td>STK-</td><td>Tickets marca Speedo</td></tr>
+      <tr><td>seq_ticket_otk</td><td>OTK-</td><td>Tickets marca O'Neill</td></tr>
+      <tr><td>seq_ticket_sptk</td><td>SPTK-</td><td>Tickets rol SPTienda</td></tr>
+      <tr><td>seq_ticket_tkt</td><td>TKT-</td><td>Tickets genéricos</td></tr>
+    </table>
+    <p>Formato: <code>{PREFIX}-000001</code> (6 dígitos). Se usa <code>NEXT VALUE FOR</code> para consumir, <code>CURRENT VALUE FOR + 1</code> para previsualizar.</p>
+  `,
+
+  'db-indexes': `
+    <h2>Índices</h2>
+    <table>
+      <tr><th>Índice</th><th>Tabla</th><th>Columna(s)</th></tr>
+      <tr><td>idx_customers_cedula</td><td>customers</td><td>cedula</td></tr>
+      <tr><td>idx_customers_ciudad</td><td>customers</td><td>id_ciudad</td></tr>
+      <tr><td>idx_tickets_cliente</td><td>tickets</td><td>id_cliente</td></tr>
+      <tr><td>idx_tickets_numero</td><td>tickets</td><td>ticket_numero</td></tr>
+      <tr><td>idx_tickets_estado</td><td>tickets</td><td>id_estado_caso</td></tr>
+      <tr><td>idx_tickets_motivo</td><td>tickets</td><td>id_motivo_caso</td></tr>
+      <tr><td>idx_tickets_usuario</td><td>tickets</td><td>id_usuario</td></tr>
+      <tr><td>idx_soluciones_ticket</td><td>soluciones_tickets</td><td>id_ticket</td></tr>
+      <tr><td>idx_guias_tienda</td><td>guias_envio</td><td>tienda_id</td></tr>
+      <tr><td>idx_notificaciones_leida</td><td>notificaciones</td><td>leida</td></tr>
+      <tr><td>idx_notificaciones_user_id</td><td>notificaciones</td><td>user_id</td></tr>
+      <tr><td>idx_audit_log_user</td><td>audit_log</td><td>user_id, created_at DESC</td></tr>
+      <tr><td>idx_comms_marca_tipo</td><td>config_comunicaciones</td><td>id_marca, tipo</td></tr>
+    </table>
+  `,
+
+  'db-functions': `
+    <h2>Funciones Helper y Predicados RLS</h2>
+    <h3>Funciones Helper</h3>
+    <ul>
+      <li><code>Security.fn_is_admin()</code> → BIT: Retorna 1 si super_admin o admin</li>
+      <li><code>Security.fn_is_sptienda()</code> → BIT: Retorna 1 si rol SPTienda</li>
+    </ul>
+
+    <h3>Funciones Predicado (Table-Valued)</h3>
+    <ul>
+      <li><code>fn_pred_profiles(@id)</code> — Filtro/BLOCK en profiles</li>
+      <li><code>fn_pred_authenticated(@dummy)</code> — Filtro en customers, tickets, lookups</li>
+      <li><code>fn_pred_tienda_write(@tienda_id)</code> — Filtro/BLOCK en tiendas</li>
+      <li><code>fn_pred_notifications(@user_id, @roles_destino)</code> — Filtro en notificaciones</li>
+      <li><code>fn_pred_tickets_sptienda(...)</code> — Filtro especializado SPTienda en tickets</li>
+      <li><code>fn_pred_prevent_super_admin_delete(@user_id)</code> — BLOCK DELETE en profiles</li>
+      <li><code>fn_kpi_user_count_sptienda(@tienda_id)</code> — Filtro KPIs por tienda</li>
+    </ul>
+  `,
+
+  'db-rls': `
+    <h2>Políticas de Row-Level Security (RLS)</h2>
+    <table>
+      <tr><th>Política</th><th>Tabla(s)</th><th>Tipo</th><th>Predicado</th></tr>
+      <tr><td>PolicyProfiles</td><td>profiles</td><td>FILTER + BLOCK</td><td>fn_pred_profiles(id)</td></tr>
+      <tr><td>PolicyCustomers</td><td>customers</td><td>FILTER + BLOCK</td><td>fn_pred_authenticated()</td></tr>
+      <tr><td>PolicyTickets</td><td>tickets</td><td>FILTER</td><td>fn_pred_tickets_sptienda(...)</td></tr>
+      <tr><td>PolicyTiendas</td><td>tiendas</td><td>FILTER + BLOCK</td><td>fn_pred_tienda_write(id)</td></tr>
+      <tr><td>PolicyNotifications</td><td>notificaciones</td><td>FILTER + BLOCK</td><td>fn_pred_notifications(user_id, roles_destino)</td></tr>
+      <tr><td>PolicyLookups</td><td>14 tablas lookup</td><td>FILTER</td><td>fn_pred_authenticated()</td></tr>
+    </table>
+
+    <h3>Mecanismo</h3>
+    <ol>
+      <li><strong>SESSION_CONTEXT</strong> se establece vía sp_set_session_context al inicio de cada query</li>
+      <li><strong>Keys:</strong> UserId, UserRole, TiendaId</li>
+      <li><strong>executeWithRLS():</strong> Envuelve cada query del backend</li>
+      <li><strong>Transacciones:</strong> Para operaciones complejas</li>
+    </ol>
+  `,
+
+  'db-triggers': `
+    <h2>Triggers</h2>
+    <table>
+      <tr><th>Trigger</th><th>Tabla</th><th>Tipo</th><th>Propósito</th></tr>
+      <tr><td>trg_generate_ticket_number</td><td>tickets</td><td>INSTEAD OF INSERT</td><td>Genera ticket_numero automático</td></tr>
+      <tr><td>trg_customers_updated_at</td><td>customers</td><td>AFTER UPDATE</td><td>Actualiza updated_at</td></tr>
+      <tr><td>trg_tickets_updated_at</td><td>tickets</td><td>AFTER UPDATE</td><td>Actualiza updated_at</td></tr>
+      <tr><td>trg_prevent_super_admin_deletion</td><td>profiles</td><td>INSTEAD OF DELETE</td><td>Previene eliminar super_admin</td></tr>
+      <tr><td>trg_restrict_sptienda_tienda_update</td><td>tiendas</td><td>AFTER UPDATE</td><td>SPTienda no modifica nombre/email</td></tr>
+    </table>
+  `,
+
+  'db-procedures': `
+    <h2>Procedimientos Almacenados</h2>
+    <h3>dbo.usp_cleanup_system</h3>
+    <p>Limpieza automática de datos temporales:</p>
+    <pre>DELETE FROM dbo.email_rate_limit WHERE created_at < DATEADD(HOUR, -24, SYSDATETIMEOFFSET());
+DELETE FROM dbo.invite_rate_limit WHERE created_at < DATEADD(HOUR, -24, SYSDATETIMEOFFSET());
+DELETE FROM dbo.audit_log WHERE created_at < DATEADD(DAY, -90, SYSDATETIMEOFFSET());</pre>
+    <p>Ejecución recomendada: Job de SQL Server Agent cada 24 horas.</p>
+  `,
+
+  'db-views': `
+    <h2>Vistas KPI</h2>
+    <h3>dbo.vw_kpi_tickets_by_tienda</h3>
+    <p>KPIs de tickets agrupados por tienda (respeta RLS).</p>
+    <ul>
+      <li>total_tickets</li>
+      <li>tickets_abiertos, tickets_resueltos, tickets_cerrados</li>
+    </ul>
+
+    <h3>dbo.vw_kpi_usuarios_by_tienda</h3>
+    <p>KPIs de usuarios por tienda (respeta RLS).</p>
+    <ul>
+      <li>total_usuarios</li>
+      <li>usuarios_activos_semana (último login &lt; 7 días)</li>
+    </ul>
+  `,
+
+  'db-seed': `
+    <h2>Seed Data (Datos Iniciales)</h2>
+    <table>
+      <tr><th>Tabla</th><th>Cantidad</th><th>Datos</th></tr>
+      <tr><td>roles</td><td>4</td><td>super_admin, admin, user, SPTienda</td></tr>
+      <tr><td>permissions</td><td>10</td><td>tickets:view/create/edit/delete, customers:view/create/edit/delete, dashboard:view, admin:users</td></tr>
+      <tr><td>role_permissions</td><td>—</td><td>super_admin → CROSS JOIN con todos los permisos</td></tr>
+      <tr><td>motivo_contacto</td><td>8</td><td>change_size, change_reference, warranty, return, coordinator_update, pqr, advice, balance_favor</td></tr>
+      <tr><td>sub_motivos</td><td>6</td><td>Cambio de destino/dirección, Retraso, Devolución, Hurto, Pérdida</td></tr>
+      <tr><td>estados_casos</td><td>6</td><td>Abierto, En Proceso, Pendiente, Resuelto, Cerrado, Cancelado</td></tr>
+      <tr><td>tallas</td><td>18</td><td>XXS, XS, S, M, L, XL, XXL, 3XL, 28-46</td></tr>
+      <tr><td>marcas</td><td>2</td><td>Speedo, O'Neill</td></tr>
+      <tr><td>ciudades</td><td>48</td><td>Bogotá, Medellín, Cali, Barranquilla, Cartagena, etc.</td></tr>
+      <tr><td>tipos_comercio</td><td>2</td><td>Tienda Física, Ecommerce</td></tr>
+    </table>
+  `,
+
+  // ===== UI =====
+  'ui-stack': `
+    <h2>Stack Tecnológico — Frontend</h2>
+    <table>
+      <tr><th>Tecnología</th><th>Versión</th><th>Propósito</th></tr>
+      <tr><td>React</td><td>18.3.1</td><td>Biblioteca UI</td></tr>
+      <tr><td>TypeScript</td><td>5.7.2</td><td>Tipado estático</td></tr>
+      <tr><td>Vite</td><td>6.0.5</td><td>Bundler</td></tr>
+      <tr><td>React Router DOM</td><td>6.28.0</td><td>Enrutamiento</td></tr>
+      <tr><td>NextUI</td><td>2.4.8</td><td>Sistema de componentes UI</td></tr>
+      <tr><td>Tailwind CSS</td><td>3.4.17</td><td>CSS utility-first</td></tr>
+      <tr><td>Framer Motion</td><td>11.11.17</td><td>Animaciones</td></tr>
+      <tr><td>Recharts</td><td>3.7.0</td><td>Gráficos (AreaChart)</td></tr>
+      <tr><td>Zustand</td><td>5.0.2</td><td>Estado global</td></tr>
+      <tr><td>Axios</td><td>1.15.2</td><td>Cliente HTTP</td></tr>
+      <tr><td>date-fns</td><td>4.1.0</td><td>Fechas</td></tr>
+      <tr><td>Sileo</td><td>0.1.4</td><td>Toast notifications</td></tr>
+    </table>
+  `,
+
+  'ui-arquitectura': `
+    <h2>Arquitectura de la UI</h2>
+    <h3>Estructura de Directorios</h3>
+    <pre>frontend/src/
+├── App.tsx / main.tsx / index.css
+├── components/icons/
+├── config/ (assets, axios, storage)
+├── modules/
+│   ├── admin/ (configuración)
+│   │   ├── layouts/ConfiguracionLayout.tsx
+│   │   └── pages/ (5 páginas)
+│   ├── auth/ (login, register, reset)
+│   │   ├── components/ProtectedRoute.tsx
+│   │   ├── pages/ (4 páginas)
+│   │   └── store/authStore.ts
+│   ├── casos/ (tickets)
+│   │   ├── components/ (4 componentes)
+│   │   └── pages/ (2 páginas)
+│   ├── clientes/ (customers)
+│   │   └── pages/CustomerListPage.tsx
+│   ├── dashboard/ (panel principal)
+│   │   ├── components/ (DashboardLayout, Sidebar)
+│   │   └── pages/DashboardPage.tsx
+│   └── tienda/ (tiendas, envíos)
+│       ├── components/ (3 modales)
+│       └── pages/ (4 páginas)
+├── services/ (email, storage)
+└── shared/ (constants, store, utils)</pre>
+
+    <h3>Patrón de Layout</h3>
+    <ul>
+      <li><strong>Rutas públicas</strong> (/login, /register, etc.): Sin layout</li>
+      <li><strong>Rutas protegidas</strong> (/dashboard/*): ProtectedRoute + DashboardLayout (Sidebar + TopBar + Outlet)</li>
+      <li><strong>ConfiguracionLayout:</strong> Sub-layout con navegación lateral propia</li>
+    </ul>
+  `,
+
+  'ui-routing': `
+    <h2>Sistema de Ruteo y Navegación</h2>
+
+    <h3>Rutas Públicas</h3>
+    <table>
+      <tr><th>Ruta</th><th>Componente</th></tr>
+      <tr><td>/login</td><td>LoginPage</td></tr>
+      <tr><td>/register</td><td>RegisterPage</td></tr>
+      <tr><td>/forgot-password</td><td>ForgotPasswordPage</td></tr>
+      <tr><td>/reset-password</td><td>ResetPasswordPage</td></tr>
+    </table>
+
+    <h3>Rutas Protegidas (/dashboard)</h3>
+    <table>
+      <tr><th>Ruta</th><th>Componente</th></tr>
+      <tr><td>/dashboard</td><td>DashboardPage</td></tr>
+      <tr><td>/dashboard/tickets</td><td>TicketListPage</td></tr>
+      <tr><td>/dashboard/tickets/registro</td><td>TicketRegistrationPage</td></tr>
+      <tr><td>/dashboard/clientes</td><td>CustomerListPage</td></tr>
+      <tr><td>/dashboard/tiendas</td><td>TiendaListPage</td></tr>
+      <tr><td>/dashboard/tiendas/:id</td><td>TiendaDetailPage</td></tr>
+      <tr><td>/dashboard/envios</td><td>EnviosRouter</td></tr>
+      <tr><td>/dashboard/configuracion</td><td>ConfiguracionLayout</td></tr>
+      <tr><td>/dashboard/configuracion/perfil</td><td>ProfilePage</td></tr>
+      <tr><td>/dashboard/configuracion/seguridad</td><td>SecurityPage</td></tr>
+      <tr><td>/dashboard/configuracion/usuarios</td><td>UserManagementPage</td></tr>
+      <tr><td>/dashboard/configuracion/comunicaciones</td><td>CommsConfigPage</td></tr>
+    </table>
+
+    <h3>Redirecciones</h3>
+    <ul>
+      <li>/ → /dashboard</li>
+      <li>* → /dashboard (ruta no encontrada)</li>
+      <li>/dashboard/configuracion → /dashboard/configuracion/perfil</li>
+    </ul>
+  `,
+
+  'ui-design': `
+    <h2>Sistema de Diseño Visual</h2>
+
+    <h3>Paleta de Colores</h3>
+    <table>
+      <tr><th>Elemento</th><th>Light</th><th>Dark</th></tr>
+      <tr><td>Fondo app</td><td>#F1F5F9</td><td>#000000</td></tr>
+      <tr><td>Fondo cards</td><td>#FFFFFF</td><td>#030712</td></tr>
+      <tr><td>Borde cards</td><td>#E5E7EB</td><td>#1F2937</td></tr>
+      <tr><td>Texto principal</td><td>#1F2937</td><td>#F9FAFB</td></tr>
+      <tr><td>Texto secundario</td><td>#6B7280</td><td>#9CA3AF</td></tr>
+      <tr><td>Color primario</td><td>#2563EB</td><td>#2563EB</td></tr>
+      <tr><td>Éxito</td><td>#22C55E</td><td>#22C55E</td></tr>
+      <tr><td>Advertencia</td><td>#F97316</td><td>#F97316</td></tr>
+      <tr><td>Peligro</td><td>#EF4444</td><td>#EF4444</td></tr>
+    </table>
+
+    <h3>Tipografía</h3>
+    <p>Familia: <code>font-sans</code> (system). Títulos: 20-24px bold. Labels KPI: 11px bold uppercase. Tablas: 14px. Sidebar: 13px.</p>
+
+    <h3>Bordes y Sombras</h3>
+    <ul>
+      <li>Cards principales: <code>rounded-[1.25rem]</code> (20px) + <code>shadow-sm</code></li>
+      <li>Botones: <code>rounded-lg</code> (8px)</li>
+      <li>Inputs search: <code>rounded-full</code></li>
+      <li>Sidebar: <code>rounded-[1.25rem]</code></li>
+    </ul>
+
+    <h3>Iconografía</h3>
+    <p>SVG inline estilo Heroicons (stroke-based, strokeWidth=2). Tamaños w-4 h-4 (16px) y w-5 h-5 (20px).</p>
+  `,
+
+  'ui-topbar': `
+    <h2>TopBar (Barra Superior)</h2>
+    <p>Integrado en <code>DashboardLayout.tsx</code>. Flex horizontal con justify-between.</p>
+    <p>Fondo blanco (light) / gray-950 (dark), rounded-[1.25rem], shadow-sm, border.</p>
+
+    <h3>Componentes (izquierda a derecha)</h3>
+
+    <h4>Búsqueda Global</h4>
+    <p>Input de NextUI, size="sm", variant="bordered", radius="full", placeholder "Buscar...". Visual placeholder (búsqueda real en cada módulo).</p>
+
+    <h4>Toggle de Tema</h4>
+    <p>Botón isIconOnly. Luna (light) / Sol (dark). Llama a <code>toggleTheme()</code> del themeStore.</p>
+
+    <h4>Centro de Notificaciones (Campana)</h4>
+    <p>Dropdown manual con:</p>
+    <ul>
+      <li>Badge rojo con contador</li>
+      <li>Sección "Tiendas": notificaciones de guías (azul) y paquetes (verde)</li>
+      <li>Sección "Tickets por vencer": Rojo (vencido), Naranja (hoy), Amarillo (pronto)</li>
+      <li>Estado vacío con icono check</li>
+    </ul>
+    <p>Polling cada 5 minutos a <code>GET /api/notifications/unread</code></p>
+
+    <h4>Menú de Usuario</h4>
+    <p>Avatar + nombre + rol. Dropdown con perfil, configuración y cerrar sesión.</p>
+  `,
+
+  'ui-sidebar': `
+    <h2>Sidebar (Barra Lateral)</h2>
+    <p>En <code>Sidebar.tsx</code> dentro de <code>DashboardLayout.tsx</code>.</p>
+    <p>Ancho expandido: 256px. Colapsado: 80px. Transición <code>transition-all duration-500</code>.</p>
+
+    <h3>Componentes</h3>
+    <ul>
+      <li><strong>Header:</strong> Logo + texto "Swim CRM" con gradiente azul</li>
+      <li><strong>Toggle:</strong> Botón para colapsar/expandir</li>
+      <li><strong>Navegación principal</strong> (varía por rol)</li>
+    </ul>
+
+    <h3>Items por Rol</h3>
+    <p><strong>super_admin / admin:</strong> Dashboard, Registrar Ticket, Tiendas, Tickets, Clientes</p>
+    <p><strong>SPTienda:</strong> Dashboard, Tickets, Registrar Ticket, Envíos</p>
+    <p><strong>user:</strong> Dashboard, Tiendas, Tickets, Registrar Ticket</p>
+    <p><strong>Administración:</strong> Configuración (visible para admin, super_admin, SPTienda)</p>
+
+    <h3>Estilo</h3>
+    <p>Item activo: bg-blue-600 text-white shadow-md. Inactivo: text-gray-600 hover:bg-gray-50.</p>
+  `,
+
+  'ui-dashboard': `
+    <h2>Dashboard (Panel de Control)</h2>
+    <p>Página: <code>DashboardPage.tsx</code></p>
+
+    <h3>Header</h3>
+    <p>Título "Panel de Control" + subtítulo "Bienvenido, {nombre}". Selector de período (Select): Hoy, Semana, Mes, Año, Histórico.</p>
+
+    <h3>Grid de KPIs (6 tarjetas)</h3>
+    <table>
+      <tr><th>KPI</th><th>Color</th><th>Dato</th></tr>
+      <tr><td>Clientes</td><td>Azul</td><td>Count de clientes únicos</td></tr>
+      <tr><td>Abiertos</td><td>Naranja</td><td>Tickets no cerrados</td></tr>
+      <tr><td>Cerrados</td><td>Verde</td><td>Tickets cerrados</td></tr>
+      <tr><td>Por Vencer</td><td>Rojo</td><td>Tickets próximos a vencer (5 días)</td></tr>
+      <tr><td>Tiempo Prom.</td><td>Púrpura</td><td>Tiempo promedio de respuesta</td></tr>
+      <tr><td>Más Común</td><td>Teal</td><td>Motivo más frecuente</td></tr>
+    </table>
+
+    <h3>Gráficos</h3>
+    <ul>
+      <li><strong>Tendencia de Tickets:</strong> AreaChart (Recharts) con gradiente azul, 250px</li>
+      <li><strong>Distribución por Estado:</strong> Barras de progreso horizontales (Abiertos azul, Cerrados verde)</li>
+    </ul>
+    <p>Endpoint: <code>GET /api/tickets/dashboard/stats?range={range}</code></p>
+  `,
+
+  'ui-customers': `
+    <h2>Módulo de Clientes</h2>
+    <p>Página: <code>CustomerListPage.tsx</code></p>
+
+    <h3>Características</h3>
+    <ul>
+      <li>Vista de tarjetas (grid 4 columnas) o lista (Table de NextUI)</li>
+      <li>Filtros: búsqueda por nombre/cédula, tipo de tienda, activos/bajas</li>
+      <li><strong>CustomerDetailDrawer:</strong> Panel lateral con info, comunicaciones (Email/WhatsApp) e historial de tickets</li>
+      <li>Modal de edición con grid 3 columnas</li>
+      <li>Soft delete con confirmación</li>
+      <li>Restaurar cliente</li>
+    </ul>
+
+    <h3>Drawer de Detalle</h3>
+    <p>max-w-[480px], header con gradiente azul. Secciones: Info Rápida (grid 2 col), Comunicación (tabs Email/WhatsApp), Historial de Tickets.</p>
+
+    <h3>Comunicaciones desde Drawer</h3>
+    <ul>
+      <li><strong>Email:</strong> Selector de marca → plantilla → asunto → mensaje → enviar</li>
+      <li><strong>WhatsApp:</strong> Selector de marca → plantilla → mensaje → abrir wa.me</li>
+    </ul>
+  `,
+
+  'ui-tickets': `
+    <h2>Módulo de Tickets</h2>
+
+    <h3>TicketListPage</h3>
+    <ul>
+      <li>Filtros: búsqueda, estado, motivo, tiempo</li>
+      <li>Tabla con columnas: Ticket, Cliente, Marca, Motivo, Estado, Creador, Creación, Límite</li>
+      <li>Colores de estado: Abierto (azul), En Proceso (naranja), Cerrado (verde), Cancelado (rojo)</li>
+      <li>Click en fila → SharedTicketModal</li>
+    </ul>
+
+    <h3>SharedTicketModal</h3>
+    <p>max-w-3xl, max-h-[85vh]. Header con número + badge. Grid 2 columnas con info. Descripción, archivos adjuntos (imágenes/PDFs). Footer: Cerrar Ticket, Editar, Eliminar.</p>
+
+    <h3>TicketRegistrationPage</h3>
+    <p>Formulario unificado cliente + ticket. Previsualización de número de ticket. Campos dinámicos según marca/motivo. Fecha límite automática. Modo edición.</p>
+
+    <h3>Otros Componentes</h3>
+    <ul>
+      <li><strong>TicketClosureModal:</strong> Cierre con resolución (nota crédito, nuevo pedido, CST)</li>
+      <li><strong>ImageLightbox:</strong> Visor de imágenes a pantalla completa</li>
+      <li><strong>TicketFileUpload:</strong> Carga de archivos (imágenes/PDF, max 10MB)</li>
+    </ul>
+  `,
+
+  'ui-tiendas': `
+    <h2>Módulo de Tiendas</h2>
+
+    <h3>TiendaListPage</h3>
+    <p>Tabs: Tiendas (cards con info + estado) / Tickets (filtrados por tienda). Filtro por ciudad.</p>
+
+    <h3>TiendaDetailPage</h3>
+    <p>Info de tienda, historial de guías, botón para nueva guía.</p>
+
+    <h3>TiendaEnviosPage (SPTienda)</h3>
+    <p>Lista de guías, checkboxes de entrega, carga de evidencias (fotos/PDF).</p>
+
+    <h3>Modales</h3>
+    <ul>
+      <li><strong>TiendaModal:</strong> Creación/edición de tienda</li>
+      <li><strong>GuiaPedidoModal:</strong> Registro combinado guía + pedidos + notificación email</li>
+      <li><strong>EntregaEvidenciaModal:</strong> Carga de evidencias</li>
+    </ul>
+  `,
+
+  'ui-config': `
+    <h2>Módulo de Configuraciones</h2>
+    <p>Layout: 2 columnas (sidebar 240px + contenido). Sub-navegación:</p>
+    <table>
+      <tr><th>Item</th><th>Ruta</th><th>Visible</th></tr>
+      <tr><td>Mi Perfil</td><td>/dashboard/configuracion/perfil</td><td>Todos</td></tr>
+      <tr><td>Gestión Usuarios</td><td>/dashboard/configuracion/usuarios</td><td>admin+</td></tr>
+      <tr><td>Comunicaciones</td><td>/dashboard/configuracion/comunicaciones</td><td>super_admin</td></tr>
+      <tr><td>Seguridad</td><td>/dashboard/configuracion/seguridad</td><td>Todos</td></tr>
+      <tr><td>Preferencias</td><td>/dashboard/configuracion/preferencias</td><td>Todos</td></tr>
+    </table>
+
+    <h3>ProfilePage</h3>
+    <p>Selector de avatar (4 opciones), campos: nombre, email, tienda (SPTienda).</p>
+
+    <h3>UserManagementPage</h3>
+    <p>Tabla de usuarios. Invitación (modal con email, rol, permisos).</p>
+
+    <h3>CommsConfigPage</h3>
+    <p>Gestión de marcas (WhatsApp, email), CRUD plantillas, config Resend API key.</p>
+  `,
+
+  'ui-auth': `
+    <h2>Módulo de Autenticación</h2>
+
+    <h3>LoginPage</h3>
+    <p>Email + password con toggle visibilidad. Enlaces a forgot-password y registro.</p>
+
+    <h3>RegisterPage</h3>
+    <p>Primer usuario = super_admin. Campos: nombre, email, password, confirmar.</p>
+
+    <h3>ForgotPasswordPage / ResetPasswordPage</h3>
+    <p>Solicitud de reset vía email. Token en URL para nueva contraseña.</p>
+
+    <h3>ProtectedRoute</h3>
+    <p>Verifica autenticación vía authStore. Redirige a /login si no autenticado.</p>
+  `,
+
+  'ui-state': `
+    <h2>Gestión de Estado Global</h2>
+
+    <h3>authStore (Zustand)</h3>
+    <p>Estado: user, loading, error. Acciones: signIn, signUp, signOut, resetPassword, loadCurrentUser, fetchUsers, inviteUser, etc.</p>
+    <p>Inicialización: <code>loadCurrentUser()</code> al iniciar la app.</p>
+
+    <h3>themeStore (Zustand)</h3>
+    <p>Estado: theme ('light' | 'dark'). Acción: toggleTheme(). Persistencia en localStorage.</p>
+
+    <h3>tiendaStore (Zustand)</h3>
+    <p>Estado: tiendas, marcas, loading, error. Acciones: fetchTiendas, fetchGuias, createGuiaWithPedidos, updatePedidoStatus, etc.</p>
+  `,
+
+  'ui-notifications': `
+    <h2>Sistema de Notificaciones UI</h2>
+    <table>
+      <tr><th>Tipo</th><th>Color</th><th>Navegación</th></tr>
+      <tr><td>guia_recibida</td><td>Azul</td><td>/dashboard/envios</td></tr>
+      <tr><td>paquete_entregado</td><td>Verde</td><td>/dashboard/envios</td></tr>
+      <tr><td>ticket_asignado</td><td>Según urgencia</td><td>/dashboard/tickets?q={numero}</td></tr>
+      <tr><td>nueva_guia</td><td>Según urgencia</td><td>/dashboard/envios</td></tr>
+    </table>
+    <p>Tickets próximos a vencer: 5 días. Polling automático cada 5 minutos.</p>
+  `,
+
+  'ui-comms': `
+    <h2>Sistema de Comunicaciones UI</h2>
+
+    <h3>Email (Resend)</h3>
+    <p>POST /api/comms/send-email. Plantillas en dbo.config_comunicaciones con placeholders. Remitente configurado por marca.</p>
+
+    <h3>WhatsApp</h3>
+    <p>Enlace wa.me/{phone}?text={message}. Número configurado por marca.</p>
+
+    <h3>Placeholders</h3>
+    <p><code>{{nombre}}</code>, <code>{{apellido}}</code>, <code>{{nombre_completo}}</code>, <code>{{cedula}}</code>, <code>{{telefono}}</code></p>
+  `,
+
+  'ui-theme': `
+    <h2>Manejo de Temas (Light/Dark)</h2>
+    <p>Implementado con Zustand + localStorage. Toggle en TopBar.</p>
+    <p>Clases Tailwind: <code>dark:</code> prefix para modo oscuro.</p>
+    <table>
+      <tr><th>Elemento</th><th>Light</th><th>Dark</th></tr>
+      <tr><td>Fondo app</td><td>#F1F5F9</td><td>#000000</td></tr>
+      <tr><td>Fondo paneles</td><td>#FFFFFF</td><td>#030712</td></tr>
+      <tr><td>Bordes</td><td>#E5E7EB</td><td>#1F2937</td></tr>
+      <tr><td>Texto principal</td><td>#1F2937</td><td>#F9FAFB</td></tr>
+    </table>
+  `,
+
+  // ===== DEPLOY =====
+  'deploy-requisitos': `
+    <h2>Requisitos Previos — Despliegue</h2>
+    <ul>
+      <li>Docker v20.10+</li>
+      <li>Docker Compose v2.0+</li>
+      <li>Git configurado en el servidor</li>
+      <li>Acceso a SQL Server (externo o contenedor)</li>
+    </ul>
+  `,
+
+  'deploy-inicial': `
+    <h2>Despliegue Inicial</h2>
+    <pre>1. git clone <URL_DEL_REPOSITORIO>
+   cd swimming
+
+2. nano backend/.env  # Configurar DB_SERVER, DB_USER, DB_PASSWORD, JWT_SECRET
+
+3. docker-compose up --build -d
+
+4. docker-compose ps  # Verificar estado</pre>
+    <p>Frontend: puerto 8080. Backend: puerto 3000 (interno).</p>
+  `,
+
+  'deploy-db': `
+    <h2>Conectividad con Base de Datos</h2>
+
+    <h3>Red Compartida (Docker Network)</h3>
+    <pre>docker network create swimming-network
+docker network connect swimming-network <NOMBRE_CONTENEDOR_DB></pre>
+
+    <h3>docker-compose.yml</h3>
+    <pre>services:
+  backend:
+    networks:
+      - swimming-network
+  frontend:
+    networks:
+      - swimming-network
+
+networks:
+  swimming-network:
+    external: true</pre>
+
+    <h3>Configuración Producción</h3>
+    <p><strong>Backend (.env):</strong></p>
+    <pre>NODE_ENV=production
+SITE_URL=http://<IP>:8080
+ALLOWED_ORIGINS=http://<IP>:8080
+DB_SERVER=<IP_VPS_O_NOMBRE_CONTENEDOR></pre>
+
+    <p><strong>Frontend (.env):</strong></p>
+    <pre>VITE_API_URL=http://<IP_VPS>:3000/api</pre>
+  `,
+
+  'deploy-update': `
+    <h2>Procedimiento de Actualización</h2>
+    <pre>git pull origin main
+docker-compose up --build -d
+docker image prune -f  # (opcional)</pre>
+    <p>Docker detecta cambios y reconstruye solo capas necesarias.</p>
+  `,
+
+  'deploy-cicd': `
+    <h2>CI/CD con GitHub Actions</h2>
+    <p>Workflow en <code>.github/workflows/deploy.yml</code>. Se ejecuta en cada push a <code>main</code>.</p>
+
+    <h3>Secretos requeridos en GitHub</h3>
+    <ul>
+      <li>SSH_HOST — IP o dominio del servidor</li>
+      <li>SSH_USER — Usuario SSH</li>
+      <li>SSH_KEY — Clave privada SSH</li>
+      <li>SSH_PORT — Puerto (default: 22)</li>
+      <li>DEPLOY_PATH — Ruta del proyecto en servidor</li>
+    </ul>
+
+    <h3>Flujo</h3>
+    <p>GitHub → runner virtual → SSH al servidor → <code>git pull</code> → <code>docker-compose up --build -d</code></p>
+  `,
+
+  'deploy-commands': `
+    <h2>Comandos de Utilidad</h2>
+    <table>
+      <tr><th>Comando</th><th>Descripción</th></tr>
+      <tr><td>docker-compose logs -f backend</td><td>Ver logs en tiempo real</td></tr>
+      <tr><td>docker-compose restart</td><td>Reiniciar servicios sin reconstruir</td></tr>
+      <tr><td>docker-compose down</td><td>Apagar sistema</td></tr>
+      <tr><td>docker image prune -f</td><td>Limpiar imágenes huérfanas</td></tr>
+    </table>
+  `,
+
+  'deploy-security': `
+    <h2>Notas de Seguridad — Despliegue</h2>
+    <ul>
+      <li><strong>HTTPS:</strong> Usar proxy inverso (Nginx Proxy Manager, Traefik) con Let's Encrypt</li>
+      <li><strong>Secretos:</strong> Nunca subir .env a GitHub</li>
+      <li><strong>Firewall:</strong> Asegurar que SQL Server permita conexión desde Docker</li>
+    </ul>
+  `,
+};
+
+function buildNav() {
+  const nav = document.getElementById('nav');
+  let html = '';
+  for (const [key, section] of Object.entries(sections)) {
+    if (section.children) {
+      html += '<div class="nav-section">';
+      html += `<div class="nav-category" onclick="toggleSection('${key}')" id="cat-${key}">`;
+      html += `<span>${section.icon || ''} ${section.label}</span>`;
+      html += '<span class="arrow">▶</span>';
+      html += '</div>';
+      html += `<div class="nav-items" id="items-${key}">`;
+      for (const [childKey, childLabel] of Object.entries(section.children)) {
+        html += `<a class="nav-item" data-section="${childKey}" onclick="showSection('${childKey}')">${childLabel}</a>`;
+      }
+      html += '</div></div>';
+    } else {
+      html += `<a class="nav-item" data-section="${key}" onclick="showSection('${key}')" style="margin: 4px 16px;border-left:none;padding-left:16px;font-weight:600">${section.icon || ''} ${section.label}</a>`;
+    }
+  }
+  nav.innerHTML = html;
+
+  const params = new URLSearchParams(window.location.hash.substring(1));
+  const initial = params.get('section') || 'inicio';
+  showSection(initial);
+}
+
+function toggleSection(key) {
+  const items = document.getElementById(`items-${key}`);
+  const cat = document.getElementById(`cat-${key}`);
+  if (!items) return;
+  items.classList.toggle('open');
+  cat.classList.toggle('open');
+}
+
+function showSection(key) {
+  document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+  let existing = document.getElementById(`section-${key}`);
+  if (!existing) {
+    existing = document.createElement('div');
+    existing.id = `section-${key}`;
+    existing.className = 'section';
+    existing.innerHTML = content[key] || '<h2>Sección no encontrada</h2>';
+    document.getElementById('content').appendChild(existing);
+  }
+  existing.classList.add('active');
+
+  const navItem = document.querySelector(`.nav-item[data-section="${key}"]`);
+  if (navItem) navItem.classList.add('active');
+
+  // auto-expand parent
+  for (const [sk, sv] of Object.entries(sections)) {
+    if (sv.children && sv.children[key]) {
+      const items = document.getElementById(`items-${sk}`);
+      const cat = document.getElementById(`cat-${sk}`);
+      if (items && !items.classList.contains('open')) {
+        items.classList.add('open');
+        cat.classList.add('open');
+      }
+    }
+  }
+
+  window.location.hash = `section=${key}`;
+}
+
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) {
+    document.querySelectorAll('.nav-item').forEach(el => el.style.display = '');
+    return;
+  }
+  document.querySelectorAll('.nav-item').forEach(el => {
+    const match = el.textContent.toLowerCase().includes(q);
+    el.style.display = match ? '' : 'none';
+    if (match) {
+      const parentSection = el.closest('.nav-section');
+      if (parentSection) {
+        const cat = parentSection.querySelector('.nav-category');
+        const items = parentSection.querySelector('.nav-items');
+        if (cat && items) {
+          items.classList.add('open');
+          cat.classList.add('open');
+        }
+      }
+    }
+  });
+});
+
+buildNav();
+</script>
+</body>
+</html>

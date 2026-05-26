@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react'
-import { X, Mail, Phone, MapPin, ExternalLink, MessageCircle } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { X, Mail, Phone, MapPin, ExternalLink, MessageCircle, Pencil, Save, User, CreditCard, Home } from 'lucide-react'
 import { tickets } from '../data/mock'
+import { showToast } from 'nextjs-toast-notify'
 
 interface Customer {
   initials: string
@@ -36,23 +37,40 @@ function cleanPhone(phone: string): string {
 
 export default function CustomerModal({ customer, onClose }: Props) {
   const overlayRef = useRef<HTMLDivElement>(null)
+  const [editing, setEditing] = useState(false)
+  const [form, setForm] = useState({ name: customer.name, owner: customer.owner, email: customer.email, phone: customer.phone, location: customer.location })
 
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { if (editing) setEditing(false); else onClose() } }
     document.addEventListener('keydown', handleKey)
     document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', handleKey)
       document.body.style.overflow = ''
     }
-  }, [onClose])
+  }, [onClose, editing])
+
+  useEffect(() => {
+    setForm({ name: customer.name, owner: customer.owner, email: customer.email, phone: customer.phone, location: customer.location })
+  }, [customer])
+
+  function set<K extends keyof typeof form>(field: K, value: string) {
+    setForm(prev => ({ ...prev, [field]: value }))
+  }
+
+  function handleSave() {
+    showToast.success(`Perfil de "${form.name}" actualizado`, {
+      duration: 4000, position: 'top-right', transition: 'bounceIn', sound: true,
+    })
+    setEditing(false)
+  }
 
   const customerTickets = tickets.filter(t => t.client === customer.name)
 
   return (
     <div
       ref={overlayRef}
-      onClick={e => { if (e.target === overlayRef.current) onClose() }}
+      onClick={e => { if (e.target === overlayRef.current) { if (editing) setEditing(false); else onClose() } }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
     >
       <div className="flex max-h-[85vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-elevation-4">
@@ -66,29 +84,85 @@ export default function CustomerModal({ customer, onClose }: Props) {
               <p className="text-caption text-slate-500">{customer.owner}</p>
             </div>
           </div>
-          <button onClick={onClose} className="rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {editing ? (
+              <button onClick={handleSave} className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-caption font-semibold text-white transition hover:bg-emerald-700">
+                <Save className="h-3.5 w-3.5" />
+                Guardar
+              </button>
+            ) : (
+              <button onClick={() => setEditing(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-caption font-semibold text-slate-600 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700">
+                <Pencil className="h-3.5 w-3.5" />
+                Editar perfil
+              </button>
+            )}
+            <button onClick={onClose} className="rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         <div className="overflow-y-auto px-6 py-5 space-y-6 scrollbar-thin">
 
           <section>
-            <p className="text-label text-slate-500 mb-3">Información de contacto</p>
-            <div className="space-y-3 text-body-medium text-slate-600">
-              <a href={`mailto:${customer.email}`} className="flex items-center gap-3 transition hover:text-violet-700">
-                <Mail className="h-4 w-4 shrink-0 text-violet-600" />
-                {customer.email}
-              </a>
-              <a href={`tel:${customer.phone}`} className="flex items-center gap-3 transition hover:text-violet-700">
-                <Phone className="h-4 w-4 shrink-0 text-violet-600" />
-                {customer.phone}
-              </a>
-              <p className="flex items-center gap-3">
-                <MapPin className="h-4 w-4 shrink-0 text-violet-600" />
-                {customer.location}
-              </p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-label text-slate-500">Información de contacto</p>
+              {editing && <span className="text-caption text-violet-600 font-medium">Editando...</span>}
             </div>
+            {editing ? (
+              <div className="space-y-3 text-body-medium text-slate-700">
+                <label className="block space-y-1">
+                  <span className="flex items-center gap-1.5 text-caption text-slate-500">
+                    <User className="h-3 w-3" />
+                    Nombre del cliente
+                  </span>
+                  <input value={form.name} onChange={e => set('name', e.target.value)} className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-violet-500" />
+                </label>
+                <label className="block space-y-1">
+                  <span className="flex items-center gap-1.5 text-caption text-slate-500">
+                    <User className="h-3 w-3" />
+                    Contacto / Propietario
+                  </span>
+                  <input value={form.owner} onChange={e => set('owner', e.target.value)} className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-violet-500" />
+                </label>
+                <label className="block space-y-1">
+                  <span className="flex items-center gap-1.5 text-caption text-slate-500">
+                    <Mail className="h-3 w-3" />
+                    Correo electrónico
+                  </span>
+                  <input value={form.email} onChange={e => set('email', e.target.value)} className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-violet-500" />
+                </label>
+                <label className="block space-y-1">
+                  <span className="flex items-center gap-1.5 text-caption text-slate-500">
+                    <Phone className="h-3 w-3" />
+                    Teléfono
+                  </span>
+                  <input value={form.phone} onChange={e => set('phone', e.target.value)} className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-violet-500" />
+                </label>
+                <label className="block space-y-1">
+                  <span className="flex items-center gap-1.5 text-caption text-slate-500">
+                    <MapPin className="h-3 w-3" />
+                    Ubicación
+                  </span>
+                  <input value={form.location} onChange={e => set('location', e.target.value)} className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-violet-500" />
+                </label>
+              </div>
+            ) : (
+              <div className="space-y-3 text-body-medium text-slate-600">
+                <a href={`mailto:${customer.email}`} className="flex items-center gap-3 transition hover:text-violet-700">
+                  <Mail className="h-4 w-4 shrink-0 text-violet-600" />
+                  {customer.email}
+                </a>
+                <a href={`tel:${customer.phone}`} className="flex items-center gap-3 transition hover:text-violet-700">
+                  <Phone className="h-4 w-4 shrink-0 text-violet-600" />
+                  {customer.phone}
+                </a>
+                <p className="flex items-center gap-3">
+                  <MapPin className="h-4 w-4 shrink-0 text-violet-600" />
+                  {customer.location}
+                </p>
+              </div>
+            )}
           </section>
 
           <section>
