@@ -5,6 +5,7 @@ import CustomersPage from './pages/CustomersPage'
 import TicketsPage from './pages/TicketsPage'
 import TicketRegistrationPage from './pages/TicketRegistrationPage'
 import StoresPage from './pages/StoresPage'
+import StoreDetailPage from './pages/StoreDetailPage'
 import SettingsPage from './pages/SettingsPage'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/tickets" element={<TicketsPage />} />
                 <Route path="/tickets/registro" element={<TicketRegistrationPage />} />
                 <Route path="/tiendas" element={<StoresPage />} />
+                <Route path="/tiendas/:nombre" element={<StoreDetailPage />} />
                 <Route path="/configuracion/*" element={<SettingsPage />} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
